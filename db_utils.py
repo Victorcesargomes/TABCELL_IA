@@ -178,3 +178,4 @@ def tentar_extrair_comando(txt: str) -> Registro | None:
         "data": data_iso,
         "descricao": m.group(4).strip() if m.group(4) else None,
     }
+
