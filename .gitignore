@@ -1,0 +1,6 @@
+# Variáveis de ambiente
+.env
+
+# Ambiente virtual (ajuste o nome da pasta, se for diferente)
+env/
+venv/
