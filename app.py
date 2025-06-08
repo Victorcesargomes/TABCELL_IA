@@ -28,6 +28,14 @@ from db_utils import (
     totais,
 )
 
+
+# Adicione após as importações no app.py
+def clear_transactions_cache():
+    keys = ["listar_transacoes_cached", "faturamento_por_descricao_cached"]
+    for key in keys:
+        if key in st.session_state:
+            del st.session_state[key]
+
 # ---------- Config -------------------------------------------------
 BASE_PATH   = Path(__file__).parent
 CLIENT_NAME = "TAB CELL Loja 1"
@@ -254,12 +262,10 @@ def sidebar():
             data_fim_str = data_fim.isoformat() if data_fim else None
             
             if st.button("🧹 Limpar Filtros", use_container_width=True):
-                if "filtro_data_inicio" in st.session_state:
-                    del st.session_state.filtro_data_inicio
-                if "filtro_data_fim" in st.session_state:
-                    del st.session_state.filtro_data_fim
-                st.cache_data.clear()
-                st.rerun()
+                # Reseta APENAS os filtros de data
+                 st.session_state.filtro_data_inicio = None
+                 st.session_state.filtro_data_fim = None
+                 st.rerun()  # Recarrega a página com filtros resetados
             
             # PRINCIPAL ALTERAÇÃO: Usar datas do filtro para calcular totais
             fat, dep, saldo = get_totais(data_inicio_str, data_fim_str)
@@ -295,13 +301,17 @@ def sidebar():
                         col2.markdown(f"**Valor:** R$ {r.valor:,.2f}")
                         
                         if col3.button("🗑️ Excluir", key=f"del-{r.id}", use_container_width=True):
-                            if deletar(int(r.id)):
-                                st.cache_data.clear()
-                                if "current_page" in st.session_state:
-                                    del st.session_state["current_page"]
-                                st.rerun()
-                            else:
-                                st.error("Falha ao excluir registro")
+                            try:
+                                if deletar(int(r.id)):
+                                    st.cache_data.clear()
+                                    if "current_page" in st.session_state:
+                                        del st.session_state["current_page"]
+                                    st.success("Lançamento excluído com sucesso!")
+                                    st.rerun()
+                                else:
+                                    st.error("Registro não encontrado ou já excluído")
+                            except Exception as e:
+                                st.error(f"Erro ao excluir: {str(e)}")
                         
                         if r.descricao:
                             st.markdown(f"**Descrição:** {r.descricao}")

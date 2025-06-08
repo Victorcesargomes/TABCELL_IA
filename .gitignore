@@ -4,3 +4,13 @@
 # Ambiente virtual (ajuste o nome da pasta, se for diferente)
 env/
 venv/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Banco de dados SQLite local
+*.db

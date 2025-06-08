@@ -59,10 +59,11 @@ def inserir(r: Registro) -> None:
     )
     c.commit()
 
-def deletar(reg_id: int) -> None:
+def deletar(reg_id: int) -> bool:
     c = _conn()
-    c.execute("DELETE FROM transacoes WHERE id = ?", (reg_id,))
+    cursor = c.execute("DELETE FROM transacoes WHERE id = ?", (reg_id,))
     c.commit()
+    return cursor.rowcount > 0  # Retorna True se excluiu algum registro
 
 def totais(
     data_inicio: Optional[str] = None, 
